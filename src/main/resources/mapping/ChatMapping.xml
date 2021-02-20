@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.mapper.ChatMapper">
+    <resultMap id="BaseResultMap" type="com.java.entity.Chat">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="aM" jdbcType="VARCHAR" property="aM"/>
+        <result column="aName" jdbcType="VARCHAR" property="aName"/>
+        <result column="aT" jdbcType="VARCHAR" property="aT"/>
+        <result column="friend" jdbcType="VARCHAR" property="friend"/>
+    </resultMap>
+    <select id="selectChat" resultType="com.java.entity.Chat">
+        select
+        *
+        from
+        chat
+    </select>
+    <select id="selectSingleChat" resultType="com.java.entity.Chat">
+        select
+        *
+        from
+        chat
+        where aName=#{aName} and friend=#{friend}
+        order by id DESC limit 10
+    </select>
+    <delete id="deleteChat" parameterType="com.java.entity.Chat">
+        delete
+        from
+        chat
+        where id = #{id}
+    </delete>
+    <update id="updateChat" parameterType="com.java.entity.Chat">
+        update
+        chat
+        set
+        aM = #{aM},
+        aName = #{aName},
+        aT = #{aT},
+        friend = #{friend}
+        where id = #{id}
+    </update>
+    <insert id="addChat" parameterType="com.java.entity.Chat">
+        INSERT INTO
+        chat
+        (aM,aName,aT,friend)
+        VALUES
+        (
+        #{aM},
+        #{aName},
+        #{aT},
+        #{friend}
+        )
+    </insert>
+</mapper>

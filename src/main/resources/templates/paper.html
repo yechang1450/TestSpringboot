@@ -1,0 +1,218 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>user</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+        <script type="text/javascript" src="../static/js/jquery.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../static/layui/layui.js" charset="utf-8"></script>
+        <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+        <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    </head>
+    <body>
+    <form class="layui-form" action="" id="addForm" style="display:none">
+        <div class="layui-form-item" style="margin-top:20px">
+            <label class="layui-form-label">课程</label>
+            <div class="layui-input-inline">
+                <input type="text" id="course" required lay-verify="required" placeholder="课程" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">试卷类型</label>
+            <div class="layui-input-inline">
+                <input type="text" id="type" required lay-verify="required" placeholder="试卷类型" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">试卷名字</label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" required lay-verify="required" placeholder="试卷名字" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">时间</label>
+            <div class="layui-input-inline">
+                <input type="text" id="time" required lay-verify="required" placeholder="时间" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo" onclick="addPaper()">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+    <table class="layui-hide" id="data" lay-filter="data"></table>
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button type="button" class="layui-btn layui-btn-sm" id="add" lay-event="insert">添加</button>
+        </div>
+    </script>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="changePaperStatus">开放/关闭</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">更新</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+    <script>
+        layui.use('table', function () {
+
+
+            var table = layui.table;
+
+            var pagecount;
+            page();
+
+            function page() {
+
+
+            }
+
+            table.render({
+                elem: '#data'
+                , url: '/selectAllPaper' //改成我们使用的servlet
+                , method: "get"
+                , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                    title: '提示'
+                    , layEvent: 'LAYTABLE_TIPS'
+                    , icon: 'layui-icon-tips'
+                }]
+                , title: '试卷数据表'
+                , cols: [
+                    [
+                        {type: 'checkbox', fixed: 'left'}
+                        , {field: 'id', title: 'id', width: 100, fixed: 'left', unresize: true}
+                        , {field: 'course', title: '课程', width: 230, edit: 'text'}
+                        , {field: 'type', title: '试卷类型', width: 130, edit: 'text'}
+                        , {field: 'name', title: '试卷名字', width: 200, edit: 'text'}
+                        , {field: 'time', title: '时间', width: 100, edit: 'text'}
+                        , {field: 'paperStatus', title: '状态', width: 80, edit: 'text'}
+                        , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 180}
+                    ]
+                ]
+                , page: true
+
+                , response: {
+                    statusName: 'status'
+                    , dataName: 'rows'
+                }
+                , parseData: function (res) {
+                    //console.log(res)
+                    return {
+                        "status": res[0].status,
+                        "message": res[1].message,
+                        "count": 1000,
+                        "rows": res[3].rows.item
+                    };
+                }
+
+            });
+            //头工具栏事件
+            table.on('toolbar(data)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'insert':
+                        insert();
+                        break;
+                };
+            });
+
+            function insert() {
+                //让添加框弹出来
+                layer_index = layer.open({
+
+                    type: 1,  //可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: "添加用户", //数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
+                    area: ['400px', '350px'], //所打开页面大小
+                    content: $("#addForm"), //内容
+                    cancel: function () {
+                        layer.close(layer_index);
+                        $("#addForm")[0].reset();
+                    }
+
+                });
+            }
+
+            //让添加框弹出来
+            table.on('tool(data)', function (obj) {
+                var data = obj.data;
+                //console.log(obj)
+                var id = data.id;
+                var course = data.course;
+                var type = data.type;
+                var name = data.name;
+                var time = data.time;
+                var paperStatus = data.paperStatus;
+                //console.log(upid);//获取id
+                if (obj.event === 'del') {
+                    layer.confirm('真的删除行么', function (index) {
+                        $.ajax({
+                            type: "get",
+                            url: "deletePaper/"+id+"",
+                            cache: false,
+                            async: false,
+                            success: function () {},
+                            error: function () {}
+                        });
+                        obj.del();
+                        layer.close(index);
+                    });
+                } else if (obj.event === 'edit') {
+                    $.ajax({
+                        type: "get",
+                        url: "updatePaper/"+id+"&&"+course+"&&"+type+"&&"+name+"&&"+time+"&&"+paperStatus+"",
+                        cache: false,
+                        async : true,
+                        success: function () {},
+                        error:function () {console.info("error");}
+                    });
+                } else if (obj.event === 'changePaperStatus') {
+                    var paperStatus = "开放";
+                    $.ajax({
+                        type: "get",
+                        url: "changePaperStatus/"+id+"&&"+paperStatus+"",
+                        cache: false,
+                        async : true,
+                        success: function () {
+
+                        },
+                        error:function () {console.info("error");}
+                    });
+                }
+            });
+        });
+        function addPaper() {
+            var course = $("#course").val();
+            var type = $("#type").val();
+            var name = $("#name").val();
+            var time = $("#time").val();
+            var paperStatus = "未开放";
+            if(course == ""||course.length == 0){
+                alert("Course Empty");
+            } else if(type == ""||type.length == 0){
+                alert("Type Empty");
+            } else if(name == ""||name.length == 0){
+                alert("Name Empty");
+            } else if(time == ""||time.length == 0){
+                alert("Time Empty");
+            } else{
+                $.ajax({
+                    type: "get",
+                    url: "addPaper/"+course+"&&"+type+"&&"+name+"&&"+time+"&&"+paperStatus+"",
+                    cache: false,
+                    async : true,
+                    success: function (data) {},
+                    error:function () {console.info("insert error");}
+                });
+            }
+        }
+    </script>
+    </body>
+</html>

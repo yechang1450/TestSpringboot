@@ -1,0 +1,197 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>chat</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../static/css/Student.css" type="text/css">
+    <link rel="icon" href="/static/ico/favicon.ico">
+    <script type="text/javascript" src="../static/js/jquery.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../static/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../static/js/Cookie.js" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body onload="selectStudent()">
+<div class="chatMain">
+    <div id="chatArea">
+        <div id="chatMainArea"></div>
+    </div>
+    <div id="friendArea">
+        <div id="friendButton"></div>
+    </div>
+</div>
+</body>
+<script>
+    document.onkeydown = function (e) {
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            addChat();
+        }
+    }
+    var year   = new Date().getFullYear();
+    var month  = new Date().getMonth()+1;
+    var day    = new Date().getDate();
+    var hour   = new Date().getHours();
+    var minute = new Date().getMinutes();
+    var second = new Date().getSeconds();
+    //hour = hour%12;//12小时制
+    if(month<10){
+        month = "0" + month;
+    }if(day<10){
+        day = "0" + day;
+    }if(hour<10){
+        hour = "" + hour;
+    }if(minute<10){
+        minute = "0" + minute;
+    }if(second<10){
+        second = "0" + second;
+    }
+    var time = year+"/"+month+"/"+day+" "+hour+":"+minute+":"+second;
+    function addChat() {
+        var getter = sessionStorage.getItem('getter');
+        var message = $("#aM").val();
+        if (message.length<1||message==""||message==" "||message=="  "){
+            return;
+        }else {
+            var data={
+                "aM":$("#aM").val(),
+                "aName":getCookie('acc'),
+                "aT":time,
+                "friend":getter
+            }
+            $.ajax({
+                type: "get",
+                url: "addChat",
+                data: data,
+                cache: false,
+                async : true,
+                typeData: "html",
+                success: function () {ShowChatDiv(getter);},
+                error:function () {console.info("addChat error");}
+            });
+        }
+    }
+    setTimeout("selectSingleChat()",1000);
+    function selectSingleChat() {
+        setTimeout("selectSingleChat()",1000);
+        var getter = sessionStorage.getItem('getter');
+        $.ajax({
+            type: "get",
+            url: "selectSingleChat/"+getter+"&&"+getCookie('acc')+"",
+            cache: false,
+            async : true,
+            success: function (data1) {
+                $.ajax({
+                    type: "get",
+                    url: "selectSingleChat1/"+getter+"&&"+getCookie('acc')+"",
+                    cache: false,
+                    async : true,
+                    success: function (data) {
+                        if(data1!=""||data1.length!=0||data!=""||data.length!=0){
+                            for (var i=data.length-1;i>=0;i--){
+                                var aM = data[i].aM;
+                                var aName = data[i].aName;
+                                var aT = data[i].aT;
+                                var headId = data1[data1.length-1].id;
+                                var TailId = data1[0].id;
+                                var num = data1.length;
+                                var html='<div style="text-align: left">';
+                                html+='\n';
+                                //html+='<div style="color: #66a3ff;">'+aName+'</div>';
+                                html+='<div style="font-size: 12px;color: #009E94">'+aT+'</div>';
+                                html+='<div>'+aM+'</div>';
+                                html+='</div>';
+                                if(i==9){
+                                    $("#chatMainLeftea").empty().append(html);
+                                } else if (num<10){
+                                    $("#chatMainLeftea").empty().append(html);
+                                } else {
+                                    $("#chatMainLeftea").append(html);
+                                }
+                            }
+                            for (var i=data1.length-1;i>=0;i--){
+                                var aM = data1[i].aM;
+                                var aName = data1[i].aName;
+                                var aT = data1[i].aT;
+                                var headId = data[data.length-1].id;
+                                var TailId = data[0].id;
+                                var num = data1.length;
+                                var html='<div style="text-align: right">';
+                                html+='\n';
+                                //html+='<div style="color: #66a3ff;">'+aName+'</div>';
+                                html+='<div style="font-size: 12px;color: #009E94">'+aT+'</div>';
+                                html+='<div>'+aM+'</div>';
+                                html+='</div>';
+                                if(i==9){
+                                    $("#chatMainRightea").empty().append(html);
+                                } else if (num<10){
+                                    $("#chatMainRightea").empty().append(html);
+                                } else {
+                                    $("#chatMainRightea").append(html);
+                                }
+                            }
+                        }
+                    },
+                    error:function () {console.info("selectSingleChat1 error");}
+                });
+            },
+            error:function () {console.info("selectSingleChat error");}
+        });
+    }
+    function ShowChatDiv(getter) {
+        sessionStorage.setItem("getter",""+getter+"");
+        $.ajax({
+            type: "get",
+            url: "selectSingleAcc/"+getter+"",
+            cache: false,
+            async : true,
+            dataType: 'json',
+            success: function (data) {
+                var name = data.realName;
+                var html='';
+                html+='<div id="chatMainMian">';
+                html+='<div id="chatHead">'+name+'</div>';
+                html+='<div id="chatMainLeftea"></div>';
+                html+='<div id="chatMainRightea"></div>';
+                html+='<div id="chatTail">';
+                html+='<div id="inputAreaDiv">';
+                html+='<textarea cols="89" rows="4" placeholder=".." id="aM"></textarea>';
+                html+='</div>';
+                html+='<div id="sendButtonDiv">';
+                html+='<button onclick="addChat()" id="sendButton">发送</button>';
+                html+='</div>';
+                html+='</div>';
+                html+='</div>';
+                $("#chatMainArea").empty().append(html);
+                selectSingleChat();
+            },
+            error:function () {console.info("selectSingleAcc error");}
+        });
+    }
+    function selectStudent(){
+        $.ajax({
+            type: "get",
+            url: "selectUser",
+            cache: false,
+            async : true,
+            success: function (data) {
+                var data = data[3].rows.item;
+                var html='';
+                for (var i=0;i<data.length;i++){
+                    if(data[i].userName==getCookie('acc')){
+                        html+='<input type="button" value="* '+data[i].realName+'" onclick="ShowChatDiv('+data[i].userName+')" class="userNameButton">';
+                    }else {
+                        html+='<input type="button" value="'+data[i].realName+'" onclick="ShowChatDiv('+data[i].userName+')" class="userNameButton">';
+                    }
+                }
+                $("#friendButton").empty().append(html);
+            },
+            error:function () {console.info("addChat error");}
+        });
+    }
+</script>
+</html>

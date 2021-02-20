@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>学之思学生端管理系统</title>
+        <link rel="icon" href="/static/ico/favicon.ico">
+        <link rel="stylesheet" href="../static/css/Student.css" type="text/css">
+        <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+        <script src="../static/js/Cookie.js" charset="utf-8" type="text/javascript"></script>
+    </head>
+    <body onload="checkStudentCookie(),selectInformation(),showAddDiv(),selectStudent()">
+        <div class="header-area">
+            <div id="headline">学之思学生端管理系统</div>
+            <div class="dropdown">
+                <input type="button" class="dropbtn" id="user-login" value="登录"/>
+                <div class="dropdown-content" id="user-controller">
+                    <a href="" id="user-center">个人中心</a>
+                    <a href="" onclick="clearCookieXSession()">切换账号</a>
+                </div>
+            </div>
+            <div id="timeBox"></div>
+        </div>
+        <div id="tableDiv">
+            <div class="blueWord" id="blueWord">消息展示板 记得查看新消息哦~<a id="ShowMessage" onclick="disShowMessage()">↑↑↑</a></div>
+            <table id="messageData"></table>
+        </div>
+
+        <div id="addDiv"></div>
+    </body>
+    <script>
+        document.onkeydown = function (key) {
+            var theEvent = window.event || key;
+            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+            if (code == 13) {
+                addChat();
+            }
+        };
+        function show(){//显示
+            document.getElementById('light').style.display='block';
+            document.getElementById('fade').style.display='block'
+        }
+        function showAddDiv(){
+            var html='<div id="light"  style=""><div id="inputarea" align="center" >';
+            html+='<div onclick="disShow()" id="quit">×</div>';
+            html+='<div id="chatArea">';
+            html+='<div id="chatMainArea"></div>';
+            html+='</div>';
+            html+='<div id="friendArea">';
+            html+='<div id="friendButton"></div>';
+            html+='</div>';
+            html+='</div></div>';
+            html+='<div id="fade"></div>';
+            $("#addDiv").empty().append(html);
+        }
+        var year   = new Date().getFullYear();
+        var month  = new Date().getMonth()+1;
+        var day    = new Date().getDate();
+        var hour   = new Date().getHours();
+        var minute = new Date().getMinutes();
+        var second = new Date().getSeconds();
+        //hour = hour%12;//12小时制
+        if(month<10){
+            month = "0" + month;
+        }if(day<10){
+            day = "0" + day;
+        }if(hour<10){
+            hour = "" + hour;
+        }if(minute<10){
+            minute = "0" + minute;
+        }if(second<10){
+            second = "0" + second;
+        }
+        var time = year+"/"+month+"/"+day+" "+hour+":"+minute+":"+second;
+
+        function addChat() {
+            var getter = sessionStorage.getItem('getter');
+            var message = $("#aM").val();
+            if (message.length<1||message==""||message==" "||message=="  "){
+                return;
+            }else {
+                var data = {
+                    "aM": $("#aM").val(),
+                    "aName": getCookie('acc'),
+                    "aT": time,
+                    "friend": getter
+                }
+                $.ajax({
+                    type: "get",
+                    url: "addChat",
+                    data: data,
+                    cache: false,
+                    async: true,
+                    typeData: "html",
+                    success: function () {
+                        ShowChatDiv(getter);
+                    },
+                    error: function () {
+                        console.info("addChat error");
+                    }
+                });
+            }
+        }
+        setTimeout("selectSingleChat()",5000);
+        function selectSingleChat() {
+            setTimeout("selectSingleChat()",100);
+            var getter = sessionStorage.getItem('getter');
+            $.ajax({
+                type: "get",
+                url: "selectSingleChat/"+getter+"&&"+getCookie('acc')+"",
+                cache: false,
+                async : true,dataType: 'json',
+                success: function (data1) {
+                    $.ajax({
+                        type: "get",
+                        url: "selectSingleChat1/"+getter+"&&"+getCookie('acc')+"",
+                        cache: false,
+                        async : true,dataType: 'json',
+                        success: function (data) {
+                            if(data1!=""||data1.length!=0||data!=""||data.length!=0){
+                                for (var i=data.length-1;i>=0;i--){
+                                    var aM = data[i].aM;
+                                    var aName = data[i].aName;
+                                    var aT = data[i].aT;
+                                    var headId = data[data.length-1].id;
+                                    var TailId = data[0].id;
+                                    var num = data1.length;
+                                    var html='<div style="text-align: left">';
+                                    html+='\n';
+                                    //html+='<div style="color: #66a3ff;">'+aName+'</div>';
+                                    html+='<div style="font-size: 12px;color: #009E94">'+aT+'</div>';
+                                    html+='<div>'+aM+'</div>';
+                                    html+='</div>';
+                                    if(i==9){
+                                        $("#chatMainLeft").empty().append(html);
+                                    } else if (num<10){
+                                        $("#chatMainLeft").empty().append(html);
+                                    } else {
+                                        $("#chatMainLeft").append(html);
+                                    }
+                                }
+                                for (var i=data1.length-1;i>=0;i--){
+                                    var aM = data1[i].aM;
+                                    var aName = data1[i].aName;
+                                    var aT = data1[i].aT;
+                                    var headId = data1[data1.length-1].id;
+                                    var TailId = data1[0].id;
+                                    var num = data1.length;
+                                    var html='<div style="text-align: right">';
+                                    html+='\n';
+                                    //html+='<div style="color: #66a3ff;">'+aName+'</div>';
+                                    html+='<div style="font-size: 12px;color: #009E94">'+aT+'</div>';
+                                    html+='<div>'+aM+'</div>';
+                                    html+='</div>';
+                                    if(i==9){
+                                        $("#chatMainRight").empty().append(html);
+                                    } else if (num<10){
+                                        $("#chatMainRight").empty().append(html);
+                                    } else {
+                                        $("#chatMainRight").append(html);
+                                    }
+                                }
+                            }
+                        },
+                        error:function () {console.info("selectSingleChat1 error");}
+                    });
+                },
+                error:function () {console.info("selectSingleChat error");}
+            });
+        }
+        function ShowChatDiv(getter) {
+            sessionStorage.setItem("getter",""+getter+"");
+            $.ajax({
+                type: "get",
+                url: "selectSingleAcc/"+getter+"",
+                cache: false,
+                async : true,
+                dataType: 'json',
+                success: function (data) {
+                    var name = data.realName;
+                    var html='';
+                    html+='<div id="chatMainMian">';
+                    html+='<div id="chatHead">'+name+'</div>';
+                    html+='<div id="chatMainLeft"></div>';
+                    html+='<div id="chatMainRight"></div>';
+                    html+='<div id="chatTail">';
+                    html+='<div id="inputAreaDiv">';
+                    html+='<textarea cols="76" rows="4" placeholder=".." id="aM"></textarea>';
+                    html+='</div>';
+                    html+='<div id="sendButtonDiv">';
+                    html+='<button onclick="addChat()" id="sendButton">发送</button>';
+                    html+='</div>';
+                    html+='</div>';
+                    html+='</div>';
+                    $("#chatMainArea").empty().append(html);
+                    selectSingleChat();
+                },
+                error:function () {console.info("selectSingleAcc error");}
+            });
+        }
+        function selectStudent(){
+            $.ajax({
+                type: "get",
+                url: "selectUser",
+                cache: false,
+                async : true,dataType: 'json',
+                success: function (data) {
+                    var data = data[3].rows.item;
+                    var html='';
+                    for (var i=0;i<data.length;i++){
+                        if(data[i].userName==getCookie('acc')){
+                            html+='<input type="button" value="* '+data[i].realName+'" onclick="ShowChatDiv('+data[i].userName+')" class="userNameButton">';
+                        }else {
+                            html+='<input type="button" value="'+data[i].realName+'" onclick="ShowChatDiv('+data[i].userName+')" class="userNameButton">';
+                        }
+                    }
+                    $("#friendButton").empty().append(html);
+                },
+                error:function () {console.info("selectUser error");}
+            });
+        }
+        function disShow(){//不显示
+            document.getElementById('light').style.display='none';
+            document.getElementById('fade').style.display='none'
+        }
+        function disShowMessage() {
+            var html = '';
+            html += '<div class="blueWord" id="blueWord">消息展示板 记得查看新消息哦~<a id="ShowMessage" onclick="ShowMessage()">↓↓↓</a></div>';
+            $("#tableDiv").empty().append(html);
+        }
+        function ShowMessage() {
+            var html = '<div class="blueWord" id="blueWord">消息展示板 记得查看新消息哦~<a id="ShowMessage" onclick="disShowMessage()">↑↑↑</a></div>';
+            html += '<table id="messageData"></table>';
+            $("#tableDiv").empty().append(html);
+            selectInformation();
+        }
+        function selectInformation() {
+            var year   = new Date().getFullYear();
+            var month  = new Date().getMonth()+1;
+            var day    = new Date().getDate();
+            var hour   = new Date().getHours();
+            var minute = new Date().getMinutes();
+            var second = new Date().getSeconds();
+            if(month<10){
+                month = "0" + month;
+            }if(day<10){
+                day = "0" + day;
+            }if(hour<10){
+                hour = "" + hour;
+            }if(minute<10){
+                minute = "0" + minute;
+            }if(second<10){
+                second = "0" + second;
+            }
+            var submitTime = year+"."+month+"."+day+" "+hour+"."+minute+"."+second;
+            $.ajax({
+                    type: "get",
+                    url: "selectSingleAcc/"+getCookie("acc")+"",
+                    cache: false,
+                    async : true,
+                    dataType: "json",
+                    success: function (stuData) {
+                        $.ajax({
+                            type: "get",
+                            url: "selectMessage",
+                            cache: false,
+                            async : true,
+                            dataType: "json",
+                            success: function (data) {
+                                var dataItem = data[3].rows.item;
+                                var html ='<tr><th>消息</th><th>提交时间</th><th>截止日期</th><th>提交者</th><th>收到人数</th><th><input type="button" class="MessageButton" style="margin-left: 110px" value="聊天" onclick="show()"></th></tr>';
+                                for(var i=0;i<dataItem.length;i++) {
+                                    var id = dataItem[i].id;
+                                    var message = dataItem[i].message;
+                                    var deadline = dataItem[i].deadline;
+                                    var submitter = dataItem[i].submitter;
+                                    var submitTime = dataItem[i].submitTime;
+                                    var countNum = dataItem[i].countNum;
+                                    var student = dataItem[i].student;
+                                    var code = sessionStorage.getItem(""+id+"");
+                                    var acc = sessionStorage.getItem("acc");
+                                    if (student=="0"){
+                                        message = "[公共消息]"+message;
+                                        html += '<tr>';
+                                        html += '<td style="width: 40%;text-align: left;padding-left: 3%">' + message + '</td>';
+                                        html += '<td style="width: 15%">' + submitTime + '</td>';
+                                        html += '<td style="width: 15%">' + deadline + '</td>';
+                                        html += '<td style="width: 5%">' + submitter + '</td>';
+                                        html += '<td style="width: 5%">' + countNum + '</td>';
+                                        html += '<td style="width: 20%" style="text-align: center">';
+                                        if(code == id&&acc==getCookie('acc')){
+                                            html += '<input type="button" value="删除" class="MessageButton" style="margin-left: 110px" onclick="delMessage('+id+')">';
+                                        }else{
+                                            html += '<input type="button" value="确认收到" class="MessageButton" style="margin-left: 50px" onclick="changeStatus('+id+','+countNum+')">';
+                                            html += '<input type="button" value="删除" class="MessageButton" onclick="delMessage('+id+')">';
+                                        }
+                                        html += '</td>';
+                                        html += '</tr>';
+                                        $("#messageData").empty().append(html);
+                                    }else if (student == getCookie("acc")||student == ""+stuData.realName+""){
+                                        message = "[个人消息]"+message;
+                                        html += '<tr>';
+                                        html += '<td style="width: 40%;text-align: left;padding-left: 3%">'+message+'</td>';
+                                        html += '<td style="width: 15%">' + submitTime + '</td>';
+                                        html += '<td style="width: 15%">' + deadline + '</td>';
+                                        html += '<td style="width: 5%">' + submitter + '</td>';
+                                        html += '<td style="width: 5%">' + countNum + '</td>';
+                                        html += '<td style="width: 20%" style="text-align: center">';
+                                        if(code == id&&acc==getCookie('acc')){
+                                            html += '<input type="button" value="删除" class="MessageButton" style="margin-left: 110px" onclick="delMessage('+id+')">';
+                                        }else{
+                                            html += '<input type="button" value="确认收到" class="MessageButton" style="margin-left: 50px" onclick="changeStatus('+id+','+countNum+')">';
+                                            html += '<input type="button" value="删除" class="MessageButton" onclick="delMessage('+id+')">';
+                                        }
+                                        html += '</td>';
+                                        html += '</tr>';
+                                        $("#messageData").empty().append(html);
+                                    }else{
+                                        continue;
+                                    }
+                                }
+                            },
+                            error:function () {console.log("selectMessage error");}
+                        });
+                    },
+                error:function () {console.info("selectSingleAcc error");}
+            });
+        }
+        function changeStatus(id,countNum) {
+            countNum += 1;
+            $.ajax({
+                type: "get",
+                url: "updateMessageStatus/"+id+"&&"+countNum+"",
+                cache: false,
+                async : true,
+                success: function () {location.reload();},
+                error:function () {console.info("updateMessageStatus error");}
+            });
+            sessionStorage.setItem(""+id+"",""+id+"");
+            selectInformation();
+        }
+        function delMessage(id) {
+            $.ajax({
+                type: "get",
+                url: "deleteMessage/"+id+"",
+                cache: false,
+                async : true,
+                success: function () {location.reload();},
+                error:function () {console.info("deleteMessage error");}
+            });
+        }
+        function time() {
+            var year   = new Date().getFullYear();
+            var month  = new Date().getMonth()+1;
+            var day    = new Date().getDate();
+            var week    = new Date().getDay();
+            var hour   = new Date().getHours();
+            var minute = new Date().getMinutes();
+            var second = new Date().getSeconds();
+            hour = hour%12;//12小时制
+            if(month<10){
+                month = "0" + month;
+            }if(day<10){
+                day = "0" + day;
+            }if(hour<10){
+                hour = "" + hour;
+            }if(minute<10){
+                minute = "0" + minute;
+            }if(second<10){
+                second = "0" + second;
+            }if(new Date().getHours()>12){
+                hour = "下午" + hour;
+            }if(new Date().getHours()<12){
+                hour = "上午" + hour;
+            }
+            switch (week) {
+                case 0 : week = "星期日 ";
+                    break;
+                case 1 : week = "星期一 ";
+                    break;
+                case 2 : week = "星期二 ";
+                    break;
+                case 3 : week = "星期三 ";
+                    break;
+                case 4 : week = "星期四 ";
+                    break;
+                case 5 : week = "星期五 ";
+                    break;
+                case 6 : week = "星期六 ";
+                    break;
+            }
+            var time = year+"/"+month+"/"+day+" "+week+" "+hour+":"+minute+":"+second;
+            $("#timeBox").empty().append(time);
+            setTimeout("time()", 999);
+        }
+    </script>
+</html>

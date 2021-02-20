@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.mapper.MessageMapper">
+    <resultMap id="BaseResultMap" type="com.java.entity.Message">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="message" jdbcType="VARCHAR" property="message"/>
+        <result column="deadline" jdbcType="VARCHAR" property="deadline"/>
+        <result column="submitter" jdbcType="VARCHAR" property="submitter"/>
+        <result column="submitTime" jdbcType="VARCHAR" property="submitTime"/>
+        <result column="countNum" jdbcType="INTEGER" property="countNum"/>
+        <result column="student" jdbcType="VARCHAR" property="student"/>
+    </resultMap>
+    <select id="selectMessage" resultType="com.java.entity.Message">
+        select
+        *
+        from
+        message
+    </select>
+    <select id="selectSingleMessage" resultType="com.java.entity.Message">
+        select
+        *
+        from
+        message
+        where id = #{id}
+    </select>
+    <delete id="deleteMessage" parameterType="com.java.entity.Message">
+        delete
+        from
+        message
+        where id = #{id}
+    </delete>
+    <update id="updateMessage" parameterType="com.java.entity.Message">
+        update
+        message
+        set
+        message = #{message},
+        deadline = #{deadline},
+        submitter = #{submitter},
+        submitTime = #{submitTime},
+        countNum = #{countNum},
+        student = #{student}
+        where id = #{id}
+    </update>
+    <update id="updateMessageCount" parameterType="com.java.entity.Message">
+        update
+        message
+        set
+        countNum = #{countNum}
+        where id = #{id}
+    </update>
+    <insert id="addMessage" parameterType="com.java.entity.Message">
+        insert into
+        message
+        (message,deadline,submitter,submitTime,countNum,student)
+        VALUES
+        (
+        #{message},
+        #{deadline},
+        #{submitter},
+        #{submitTime},
+        #{countNum},
+        #{student}
+        )
+    </insert>
+</mapper>

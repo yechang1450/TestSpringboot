@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>学之思学生信息中心</title>
+    <link rel="icon" href="/static/ico/favicon.ico">
+    <link rel="stylesheet" href="../static/css/Student.css" type="text/css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="../static/js/Cookie.js" charset="utf-8" type="text/javascript"></script>
+</head>
+<body onload="time(),checkStuCenterCookie(),selectUserInformation()">
+<div class="header-area">
+    <div id="headline">学生个人信息中心</div>
+    <div class="dropdown">
+        <input type="button" class="dropbtn" id="user-login" value="登录"/>
+        <div class="dropdown-content" id="user-controller">
+            <a href="" id="user-back">返回首页</a>
+            <a href="" onclick="clearCookieXSession()">切换账号</a>
+        </div>
+    </div>
+    <div id="timeBox"></div>
+</div>
+<div>
+    <div>
+        <div id="stuData"></div>
+    </div>
+</div>
+<div id="addDiv" >
+    <div id="light">
+        <div id="inputarea" align="center" >
+            <div>
+                <div class="inputTitle">旧密码</div>
+                <input type="password" placeholder="旧密码" class="addifo" id="oldPwd"/><br/>
+            </div><div>
+                <div class="inputTitle">新密码</div>
+                <input type="password" placeholder="新密码" class="addifo" id="newPwd"/><br/>
+            </div><div>
+                <div class="inputTitle">确认新密码</div>
+                <input type="password" placeholder="确认新密码" class="addifo" id="conNewPwd"/><br/>
+            </div>
+            <div id="return">
+                <input type="button" value="确定" onclick="changePwd()" class="button" />
+                <input type="button" value="返回" onclick="disShow()" class="button" />
+            </div>
+        </div>
+    </div>
+    <div id="fade"></div>
+</div>
+</body>
+<script>
+    function time() {
+        var year   = new Date().getFullYear();
+        var month  = new Date().getMonth()+1;
+        var day    = new Date().getDate();
+        var week    = new Date().getDay();
+        var hour   = new Date().getHours();
+        var minute = new Date().getMinutes();
+        var second = new Date().getSeconds();
+        hour = hour%12;//12小时制
+        if(month<10){
+            month = "0" + month;
+        }if(day<10){
+            day = "0" + day;
+        }if(hour<10){
+            hour = "" + hour;
+        }if(minute<10){
+            minute = "0" + minute;
+        }if(second<10){
+            second = "0" + second;
+        }if(new Date().getHours()>12){
+            hour = "下午" + hour;
+        }if(new Date().getHours()<12){
+            hour = "上午" + hour;
+        }
+        switch (week) {
+            case 0 : week = "星期日 ";
+                break;
+            case 1 : week = "星期一 ";
+                break;
+            case 2 : week = "星期二 ";
+                break;
+            case 3 : week = "星期三 ";
+                break;
+            case 4 : week = "星期四 ";
+                break;
+            case 5 : week = "星期五 ";
+                break;
+            case 6 : week = "星期六 ";
+                break;
+        }
+        var time = year+"/"+month+"/"+day+" "+week+" "+hour+":"+minute+":"+second;
+        $("#timeBox").empty().append(time);
+        setTimeout("time()", 999);
+    }
+    function selectUserInformation(){
+        $.ajax({
+            type: "get",
+            url: "selectUserName/acc="+getCookie("acc")+"",
+            cache: false,
+            async : true,dataType: 'json',
+            success: function (data) {
+                var html ='';
+                // var id=data.id;
+                // var passWord=data.passWord;
+                // var idCard=data.idCard;
+                var userName=data.userName;
+                var grade=data.grade;
+                var email=data.email;
+                var realName=data.realName;
+                var personShow=data.personShow;
+                var year = new Date().getFullYear();
+                while(year-grade == 0){
+                    grade = "大学第一学年";
+                }while(year-grade == 1){
+                    grade = "大学第二学年";
+                }while(year-grade == 2){
+                    grade = "大学第三学年";
+                }while(year-grade == 3){
+                    grade = "大学第四学年";
+                }while(year-grade == 4){
+                    grade = "大学第五学年";
+                }
+                html +='<div><div class="listHead">用户名</div><div class="datalist">'+userName+'</div></div>';
+                html +='<div><div class="listHead">年级</div><div class="datalist">'+grade+'</div></div>';
+                html +='<div><div class="listHead">邮箱地址</div><div class="datalist">'+email+'</div></div>';
+                html +='<div><div class="listHead">姓名</div><div class="datalist">'+realName+'</div></div>';
+                html +='<div><div class="listHead">个人简介</div><div class="datalist">'+personShow+'</div></div>';
+                html +='<div><div class="listHead">操作</div><div class="datalist">';
+                html +='<input type="button" value="修改信息" onclick="updateInformation()" class="ControlButton" />';
+                html +='<input type="button" value="更改密码" onclick="show()" class="ControlButton" />';
+                html +='</div></div>';
+                $("#stuData").empty().append(html);
+            },
+            error:function () {console.info("selectUserName error");}
+        });
+    }
+    function updateInformation() {
+        $.ajax({
+            type: "get",
+            url: "selectUserName/acc="+getCookie("acc")+"",
+            cache: false,
+            async : true,dataType: 'json',
+            success: function (data) {
+                var html ='';
+                // var id=data.id;
+                // var passWord=data.passWord;
+                // var idCard=data.idCard;
+                var userName=data.userName;
+                var grade=data.grade;
+                var email=data.email;
+                var realName=data.realName;
+                var personShow=data.personShow;
+                var year = new Date().getFullYear();
+                while(year-grade == 0){
+                    grade = "大学第一学年";
+                }while(year-grade == 1){
+                    grade = "大学第二学年";
+                }while(year-grade == 2){
+                    grade = "大学第三学年";
+                }while(year-grade == 3){
+                    grade = "大学第四学年";
+                }while(year-grade == 4){
+                    grade = "大学第五学年";
+                }
+                html +='<div><div class="listHead">用户名</div><div class="datalist">'+userName+'</div></div>';
+                html +='<div><div class="listHead">年级</div><div class="datalist">'+grade+'</div></div>';
+                html +='<div><div class="listHead">邮箱地址</div><div class="datalist"><input type="text" id="email" value="'+email+'" /></div></div>';
+                html +='<div><div class="listHead">姓名</div><div class="datalist"><input type="text" id="realName" value="'+realName+'" /></div></div>';
+                html +='<div><div class="listHead">个人简介</div><div class="datalist"><input type="text" id="personShow" value="'+personShow+'" /></div></div>';
+                html +='<div><div class="listHead">操作</div><div class="datalist">';
+                html +='<input type="button" value="确认修改" onclick="changeInformation()" class="ControlButton" />';
+                html +='<input type="button" value="更改密码" onclick="show()" class="ControlButton" />';
+                html +='</div></div>';
+                $("#stuData").empty().append(html);
+            },
+            error:function () {console.info("selectUserName error");}
+        });
+    }
+    function changeInformation() {
+        var email = $("#email").val();
+        var realName = $("#realName").val();
+        var personShow = $("#personShow").val();
+        while(email==""){
+            email = "example@xxx.com";
+        }while(realName==""){
+            realName = "你的真实姓名";
+        }while(personShow==""){
+            personShow = "介绍一下自己吧";
+        }$.ajax({
+            type: "get",
+            url: "updateUserInformation/"+getCookie("acc")+"&&"+email+"&&"+realName+"&&"+personShow+"",
+            cache: false,
+            async : true,
+            success: function () {
+                location.reload();
+            },
+            error:function () {console.info("updateUserInformation error");}
+        });
+    }
+    function changePwd() {
+        var oldPwd = $("#oldPwd").val();
+        var newPwd = $("#newPwd").val();
+        var conNewPwd = $("#conNewPwd").val();
+        if (oldPwd == ""||oldPwd.length == 0) {
+            var html = '<div class="tip">OldPassword is Empty !<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("returnButton()", 999);
+        } else if (newPwd == ""||newPwd.length == 0) {
+            var html = '<div class="tip">NewPassword is Empty !<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("returnButton()", 999);
+        } else if (newPwd == oldPwd) {
+            var html = '<div class="tip">NewPassword Can Not Be Same As OldPassword !<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("returnButton()", 999);
+        } else if (conNewPwd != newPwd) {
+            var html = '<div class="tip">ConfirmPassword is Not Same As NewPassword !<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("returnButton()", 999);
+        } else {
+            $.ajax({
+                type: "get",
+                url: "selectUserName/acc="+getCookie("acc")+"",
+                cache: false,
+                async : true,dataType: 'json',
+                success: function (data) {
+                    if(data.passWord == oldPwd){
+                        $.ajax({
+                            type: "get",
+                            url: "updateUserPwd/acc="+getCookie("acc")+"&&pwd="+conNewPwd+"",
+                            cache: false,
+                            async : true,
+                            success: function () {
+                                var html = '<div class="tip">Change Password Success !<br/></div>';
+                                $("#return").empty().append(html);
+                                setTimeout("location.reload()", 999);
+                            },
+                            error:function () {console.info("updateUserPwd error");}
+                        });
+                    }else if(data.passWord != oldPwd){
+                        var html = '<div class="tip">Error OldPassword !<br/></div>';
+                        $("#return").empty().append(html);
+                        setTimeout("returnButton()", 999);
+                    }else {
+                        var html = '<div class="tip">Error !<br/></div>';
+                        $("#return").empty().append(html);
+                        setTimeout("returnButton()", 999);
+                    }
+                },
+                error:function () {console.info("selectUserName error");}
+            });
+        }
+    }
+    function returnButton() {
+        var html = '<input type="button" value="确定" onclick="changePwd()" class="button" />';
+        html += '<input type="button" value="返回" onclick="disShow()" class="button" />';
+        $("#return").empty().append(html);
+    }
+
+    function show(){//显示
+        document.getElementById('light').style.display='block';
+        document.getElementById('fade').style.display='block'
+    }
+    function disShow(){//不显示
+        document.getElementById('light').style.display='none';
+        document.getElementById('fade').style.display='none'
+    }
+</script>
+</html>

@@ -1,0 +1,206 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>message</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+    <script type="text/javascript" src="../static/js/jquery.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../static/layui/layui.js" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="../static/js/Cookie.js" charset="utf-8" type="text/javascript"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<form class="layui-form" action="" id="addForm" style="display:none">
+    <div class="layui-form-item" style="margin-top:20px">
+        <label class="layui-form-label">消息</label>
+        <div class="layui-input-inline">
+            <input type="text" id="message" required lay-verify="required" placeholder="消息" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">截止时间</label>
+        <div class="layui-input-inline">
+            <input type="text" id="deadline" required lay-verify="required" placeholder="截止时间" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">提交者</label>
+        <div class="layui-input-inline">
+            <input type="text" id="submitter" required lay-verify="required" placeholder="提交者" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">发向对象</label>
+        <div class="layui-input-inline">
+            <input type="text" id="student" required lay-verify="required" placeholder="发向对象" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo" onclick="addMessage()">提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<table class="layui-hide" id="data" lay-filter="data"></table>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button type="button" class="layui-btn layui-btn-sm" id="add" lay-event="insert">添加</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">更新</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use('table', function () {
+        var table = layui.table;
+        var pagecount;
+        page();
+        function page() {
+        }
+        table.render({
+            elem: '#data'
+            , url: '/selectMessage' //改成我们使用的servlet
+            , method: "get"
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , title: '试卷数据表'
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'id', width: 100, fixed: 'left', unresize: true}
+                    , {field: 'message', title: '消息', width: 300, edit: 'text'}
+                    , {field: 'deadline', title: '截止时间', width: 180, edit: 'text'}
+                    , {field: 'submitter', title: '提交者', width: 150, edit: 'text'}
+                    , {field: 'submitTime', title: '提交时间', width: 180, edit: 'text'}
+                    , {field: 'countNum', title: '已读人数', width: 130, edit: 'text'}
+                    , {field: 'student', title: '发向对象', width: 160, edit: 'text'}
+                    , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 120}
+                ]
+            ]
+            , page: true
+
+            , response: {
+                statusName: 'status'
+                , dataName: 'rows'
+            }
+            , parseData: function (res) {
+                //console.log(res)
+                return {
+                    "status": res[0].status,
+                    "message": res[1].message,
+                    "count": 1000,
+                    "rows": res[3].rows.item
+                };
+            }
+        });
+        //头工具栏事件
+        table.on('toolbar(data)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'insert':
+                    insert();
+                    break;
+            };
+        });
+        function insert() {
+            //让添加框弹出来
+            layer_index = layer.open({
+                type: 1,  //可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                title: "添加用户", //数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
+                area: ['400px', '350px'], //所打开页面大小
+                content: $("#addForm"), //内容
+                cancel: function () {
+                    layer.close(layer_index);
+                    $("#addForm")[0].reset();
+                }
+            });
+        }
+        //让添加框弹出来
+        table.on('tool(data)', function (obj) {
+            var data = obj.data;
+            //console.log(obj)
+            var id = data.id;
+            var message = data.message;
+            var deadline = data.deadline;
+            var submitter = data.submitter;
+            var submitTime = data.submitTime;
+            var countNum = data.countNum;
+            var student = data.student;
+            //console.log(upid);//获取id
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    $.ajax({
+                        type: "get",
+                        url: "deleteMessage/"+id+"",
+                        cache: false,
+                        async: false,
+                        success: function (data) {},
+                        error: function () {console.info("del error");}
+                    });
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {
+                $.ajax({
+                    type: "get",
+                    url: "updateMessage/"+id+"&&"+message+"&&"+deadline+"&&"+submitter+"&&"+submitTime+"&&"+countNum+"&&"+student+"",
+                    cache: false,
+                    async : true,
+                    success: function (data) {},
+                    error:function () {console.info("edit error");}
+                });
+            }
+        });
+    });
+    var year   = new Date().getFullYear();
+    var month  = new Date().getMonth()+1;
+    var day    = new Date().getDate();
+    var hour   = new Date().getHours();
+    var minute = new Date().getMinutes();
+    var second = new Date().getSeconds();
+    if(month<10){
+        month = "0" + month;
+    }if(day<10){
+        day = "0" + day;
+    }if(hour<10){
+        hour = "" + hour;
+    }if(minute<10){
+        minute = "0" + minute;
+    }if(second<10){
+        second = "0" + second;
+    }
+    var submitTime = year+"."+month+"."+day+" "+hour+"."+minute+"."+second;
+    document.getElementById("deadline").value = submitTime;
+    document.getElementById("submitter").value = ""+getCookie("acc")+"";
+    document.getElementById("student").value = "0";
+    function addMessage() {
+        var message = $("#message").val();
+        var deadline = $("#deadline").val();
+        var submitter = $("#submitter").val();
+        var student = $("#student").val();
+        var countNum = 0;
+        $.ajax({
+            type: "get",
+            url: "addMessage/"+message+"&&"+deadline+"&&"+submitter+"&&"+submitTime+"&&"+countNum+"&&"+student+"",
+            cache: false,
+            async : true,
+            success: function () {},
+            error:function () {console.info("add error");}
+        });
+    }
+</script>
+</body>
+</html>

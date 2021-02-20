@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.mapper.TMapper">
+    <resultMap id="BaseResultMap" type="com.java.entity.T">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="tNum" jdbcType="INTEGER" property="tNum"/>
+        <result column="detail" jdbcType="VARCHAR" property="detail"/>
+        <result column="tImg" jdbcType="VARCHAR" property="tImg"/>
+        <result column="solution" jdbcType="VARCHAR" property="solution"/>
+        <result column="analysis" jdbcType="VARCHAR" property="analysis"/>
+        <result column="difficulty" jdbcType="INTEGER" property="difficulty"/>
+    </resultMap>
+    <select id="selectT" resultType="com.java.entity.T">
+        select
+        *
+        from
+        t
+    </select>
+    <delete id="deleteT" parameterType="com.java.entity.T">
+        delete
+        from
+        t
+        where id = #{id}
+    </delete>
+    <update id="updateT" parameterType="com.java.entity.T">
+        update
+        t
+        set
+        tNum = #{tNum},
+        detail = #{detail},
+        tImg = #{tImg},
+        solution = #{solution},
+        analysis = #{analysis},
+        difficulty = #{difficulty}
+        where id = #{id}
+    </update>
+    <insert id="addT" parameterType="com.java.entity.T">
+        INSERT INTO
+        t
+        (tNum,detail,tImg,solution,analysis,difficulty)
+        VALUES
+        (
+        #{tNum},
+        #{detail},
+        #{tImg},
+        #{solution},
+        #{analysis},
+        #{difficulty}
+        )
+    </insert>
+</mapper>

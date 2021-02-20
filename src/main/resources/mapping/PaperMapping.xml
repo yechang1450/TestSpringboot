@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.mapper.PaperMapper">
+    <resultMap id="BaseResultMap" type="com.java.entity.Paper">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="course" jdbcType="VARCHAR" property="course"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="time" jdbcType="INTEGER" property="time"/>
+        <result column="paperStatus" jdbcType="VARCHAR" property="paperStatus"/>
+    </resultMap>
+    <select id="selectAllPaperHead" resultType="com.java.entity.Paper">
+        select
+        *
+        from
+        paper
+    </select>
+    <delete id="deletePaper" parameterType="com.java.entity.Paper">
+        delete
+        from
+        paper
+        where id = #{id}
+    </delete>
+    <update id="updatePaper" parameterType="com.java.entity.Paper">
+        update
+        paper
+        set
+        course = #{course},
+        type = #{type},
+        name = #{name},
+        time = #{time},
+        paperStatus = #{paperStatus}
+        where id = #{id}
+    </update>
+    <update id="changePaperStatus" parameterType="com.java.entity.Paper">
+        update
+        paper
+        set
+        paperStatus = #{paperStatus}
+        where id = #{id}
+    </update>
+    <insert id="addPaper" parameterType="com.java.entity.Paper">
+        INSERT INTO
+        paper
+        (course,type,name,time,paperStatus)
+        VALUES
+        (
+        #{course},
+        #{type},
+        #{name},
+        #{time},
+        #{paperStatus}
+        )
+    </insert>
+</mapper>

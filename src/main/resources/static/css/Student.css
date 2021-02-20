@@ -1,0 +1,367 @@
+/***style.css****/
+body{
+    background: no-repeat fixed center / cover;
+}
+
+.header-area {
+    width: 100%;
+    height: 50px;
+    background-color: #66a3ff
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    float: right
+}
+
+.dropbtn {
+    width: 100%;
+    height: 50px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding-left: 15px;
+    padding-right: 15px;
+    line-height: 50px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    float: right
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    margin-top: 50px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2)
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1
+}
+
+.dropdown:hover .dropdown-content {
+    display: block
+}
+
+/*.dropdown:hover .dropbtn {*/
+/*    background-color: #3e8e41;*/
+/*}*/
+
+#headline{
+    color: white;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    margin-left: 10px;
+    float: left
+}
+#timeBox{
+    color: white;
+    height: 50px;
+    line-height: 50px;
+    font-size: 16px;
+    float: right;
+    margin-right: 10px
+}
+#stuData{
+    color: black;
+    width: 70%;
+    height: 100%;
+    margin-left: 15%;
+    margin-top: 50px
+}
+.listHead {
+    width: 100px;
+    float: left;
+    color: white;
+    border: 1px solid white;
+    line-height: 50px;
+    font-size: 16px;
+    padding-right: 15px;
+    background-color: #4CAF50;
+    text-align: right
+}
+.datalist {
+    width: 500px;
+    float: left;
+    color: white;
+    border: 1px solid white;
+    line-height: 50px;
+    font-size: 16px;
+    margin: 0px 10px 0px 10px;
+    padding-left: 15px;
+    background-color: #5FB878
+}
+#fade{
+    display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color:#fff;
+    z-index:1001;
+    opacity:.75
+}
+#light {
+    display: none;
+    position: absolute;
+    top: 6%;
+    left: 20%;
+    width: 60%;
+    height: 83%;
+    padding: 20px;
+    border: 1px solid #111;
+    background-color:#fff;
+    z-index:1002;
+    overflow: auto;
+    background-size:100%
+}
+#inputArea{
+    width:60%;
+    height:20%;
+    margin-left:21%;
+    margin-top:8%
+}
+#stuM{
+    padding: 15px;
+    font-size:16px;
+    color:black
+}
+.inputTitle{
+    color:black;
+    font-size:16px;
+    margin-top:5%
+}
+.addifo{
+    border:1px solid #111;
+    background-color:#fff;
+    color:#111;
+    width:250px;
+    height:35px;
+    font-size:16px;
+    padding-left:12px;
+    border-radius: 5px
+}
+.button{
+    background-color:#111;
+    color:#fff;
+    width:109px;
+    height:30px;
+    border:1px solid #fff;
+    border-radius: 5px;
+    margin-top:8%
+}
+.ControlButton{
+    background-color:#4CAF50;
+    color:#fff;
+    width:109px;
+    height:30px;
+    margin: 10px 10px 10px 10px;
+    border:1px solid #fff;
+    border-radius: 5px;
+    float: left
+}
+.tip{
+    font-size:18px;
+    text-align:center;
+    color:black;
+    margin-top: 6%
+}
+#tableDiv{
+    width: 100%;
+    height: 50px;
+    border: 1px solid #93D1FF
+}
+#messageData{
+    width: 90%;
+    margin-left: 5%;
+    border: 1px solid #93D1FF;
+    font-size: 16px;
+    line-height: 50px;
+    text-align: center;
+    color: #93D1FF
+}
+.blueWord{
+    font-size: 16px;
+    line-height: 50px;
+    text-align: center;
+    color: #93D1FF
+}
+#blueWord{
+    font-size: 20px;
+    line-height: 50px;
+    text-align: center;
+    color: #93D1FF
+}
+.MessageButton{
+    background-color: #93D1FF;
+    color:#fff;
+    width:109px;
+    height:30px;
+    margin: 10px 10px 10px 10px;
+    border:1px solid #fff;
+    border-radius: 5px;
+    float: left
+}
+#ShowMessage {
+    width: 60px;
+    height: 50px;
+    background-color: white;
+    color: #93D1FF;
+    text-align: center;
+    line-height: 50px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px
+}
+#ShowMessage:hover {
+    background-color: #fff9ec;
+}
+#stuMessage{
+    width: 200px;
+    height: 200px;
+    font-size: 16px;
+    color: black;
+    padding: 15px
+}
+#M2M{
+    width: 150px;
+    height: 50px;
+}
+#chatArea{
+    width: 80%;
+    height: 100%;
+    float: left;
+    margin-top: 1%;
+}
+#friendArea{
+    width: 20%;
+    height: 100%;
+    float: left;
+    margin-top: 1%;
+}
+.chatMain{
+    width: 80%;
+    margin-left: 10%;
+    height: 100%;
+}
+.userNameButton{
+    background-color: #66a3ff;
+    color: white;
+    width: 180px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 16px;
+    border: 1px solid white;
+    cursor: pointer;
+    margin-top: 5px;
+}
+.userNameButton:hover{
+    background-color: #fff9ec;
+    color: #66a3ff;
+}
+textarea{
+    color:black;
+    font-size:16px;
+    padding:10px
+}
+#chatMainMian{
+    width:90%;
+    height:100%;
+    margin-left:5%;
+    font-size:16px;
+}
+#chatHead{
+    width:98%;
+    height:10%;
+    line-height:50px;
+    margin-left:1%;
+    text-align:center;
+    font-size:16px;background:#eeeeee;
+}
+#chatMainLeft{
+    width:39%;
+    height:470px;
+    padding-left: 5%;
+    margin-left: 1.5%;
+    padding-right: 5%;
+    font-size:16px;background:#dddddd;
+    float: left;
+}
+#chatMainRight{
+    width:39%;
+    height:470px;
+    padding-left: 5%;
+    padding-right: 5%;
+    font-size:16px;background:#dddddd;
+    float: left;
+}
+#chatMainLeftea{
+    width:39%;
+    height:470px;
+    padding-left: 5%;
+    margin-left: 1%;
+    padding-right: 5%;
+    font-size:16px;background:#dddddd;
+    float: left;
+}
+#chatMainRightea{
+    width:39%;
+    height:470px;
+    padding-left: 5%;
+    padding-right: 5%;
+    font-size:16px;background:#dddddd;
+    float: left;
+}
+#chatTail{
+    width:98%;
+    height: 20%;
+    margin-left:1%;
+    font-size:16px;background:#eeeeee;
+}
+#inputAreaDiv{
+    width:79.5%;
+    height:100px;
+    float:left;
+    margin: 3px 0px 3px 3px;
+}
+#sendButtonDiv{
+    width:20%;
+    height:100px;
+    float:left;
+}
+#sendButton{
+    text-align:center;
+    cursor:pointer;
+    background-color:#dddddd;
+    color:white;
+    font-size:16px;
+    width:99%;
+    height:100%;
+    margin-left:0.5%;
+    bolder:1px solid #111111;
+    float:left;
+}
+#quit{
+    text-align:right;
+    color:black;
+    font-size:24px;
+    margin-right:10px;
+    margin-top:10px;
+    cursor:pointer;
+}

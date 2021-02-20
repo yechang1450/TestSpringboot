@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.mapper.TifoMapper">
+    <resultMap id="BaseResultMap" type="com.java.entity.Tifo">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="paperName" jdbcType="VARCHAR" property="paperName"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="tNum" jdbcType="INTEGER" property="tNum"/>
+    </resultMap>
+    <select id="selectTifo" resultType="com.java.entity.Tifo">
+        select
+        *
+        from
+        tifo
+    </select>
+    <delete id="deleteTifo" parameterType="com.java.entity.Tifo">
+        delete
+        from
+        tifo
+        where id = #{id}
+    </delete>
+    <update id="updateTifo" parameterType="com.java.entity.Tifo">
+        update
+        tifo
+        set
+        paperName = #{paperName},
+        type = #{type},
+        name = #{name},
+        tNum = #{tNum}
+        where id = #{id}
+    </update>
+    <insert id="addTifo" parameterType="com.java.entity.Tifo">
+        INSERT INTO
+        tifo
+        (paperName,type,name,tNum)
+        VALUES
+        (
+        #{paperName},
+        #{type},
+        #{name},
+        #{tNum}
+        )
+    </insert>
+</mapper>

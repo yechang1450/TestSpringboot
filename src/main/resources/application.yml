@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://58.87.95.35:3306/TOS Online Examination System Database?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Yec.18303273731
+  thymeleaf:
+    prefix:
+      classpath: /templates/
+  mvc:
+    static-path-pattern: /static/**
+
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.java.entity
+
+#showSql
+logging:
+  level:
+    com:
+      example:
+        mapper: debug

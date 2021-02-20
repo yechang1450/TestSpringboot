@@ -1,0 +1,410 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Login</title>
+    <link rel="icon" href="/static/ico/favicon.ico">
+    <link rel="stylesheet" href="../static/css/style.css" type="text/css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="../static/js/Cookie.js" type="text/javascript">//@Author yechang1450</script>
+</head>
+<body class="body_bg" onload="login(),checkLoginCookie()">
+<div id="All"></div>
+</body>
+<script>
+    function LoginByAcc() {
+        var acc = $("#acc").val();
+        var pwd = $("#pwd").val();
+        if (acc.length < 1) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">tip! Account is Empty!<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("loginbutton()", 999);
+        } else if (pwd.length < 1) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">tip! Password is Empty!<br/></div>';
+            $("#return").empty().append(html);
+            setTimeout("loginbutton()", 999);
+        } else {
+            $.ajax({
+                type: "get",
+                url: "selectUserName/acc=" + acc + "",
+                cache: false,
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.passWord == pwd) {
+                        ////登录成功//////登录成功/////////登录成功//////登录成功//////登录成功//////登录成功//////登录成功///////
+                        var grade = data.grade;
+                        setCookie("acc", acc, 30);
+                        setCookie("grade", grade, 30);
+                        sessionStorage.setItem("acc",""+getCookie('acc')+"");
+                        location.reload();
+                    } else {
+                        var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">tip! Password is error!<br/></div>';
+                        $("#return").empty().append(html);
+                        setTimeout("loginbutton()", 999);
+                    }
+                },
+                error: function () {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">tip! Account Can not Found!<br/></div>';
+                    $("#return").empty().append(html);
+                    setTimeout("loginbutton()", 999);
+                }
+            });
+        }
+    }
+    //////修改密码部分/////////修改密码部分/////////修改密码部分/////////修改密码部分//////////
+    function UpdatePwd() {
+        var acc = $("#cacc").val();
+        var idCard = $("#cidCard").val();
+        var pwd = $("#cpwd").val();
+        var password = $("#cpassword").val();
+        $.ajax({
+            type: "get",
+            url: "/selectUserName/acc=" + acc + "",
+            cache: false,
+            async: false,dataType: 'json',
+            success: function (data) {
+                if (acc.length ==0) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += "tip: Account Empty!";
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (acc.length <4) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += "tip! Account'length should be 4 at least !";
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (pwd.length == 0) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += "tip: Password Empty";
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (pwd.length <6) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += 'tip! Password is Error<br/>';
+                    html += "tip: Password'length should be 6 at least!";
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (password.length == 0) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += 'tip! ConfromPassword Empty';
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (pwd != password) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += 'tip! ConfromPassword is not same as Password';
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (idCard.length == 0) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += 'tip! IdCard Empty';
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (idCard != data.idCard) {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += 'tip! Error idCard';
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                } else if (idCard == data.idCard) {
+                    $.ajax({
+                        type: "get",
+                        url: "/updateUserPwd/acc=" + acc + "&&pwd=" + password + "",
+                        cache: false,
+                        async: false,
+                        success: function () {
+                            ///////密码修改成功/////////密码修改成功/////////密码修改成功/////////密码修改成功///
+                            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                            html += 'Success! Auto loading...';
+                            html += '</div>';
+                            $("#return").empty().append(html);
+                            setTimeout("LoginToUser("+acc+","+data.grade+")", 999);
+                        },
+                        error: function () {
+                            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                            html += 'Error! ';
+                            html += '</div>';
+                            $("#return").empty().append(html);
+                            setTimeout("ChangePwdUpbutton()", 999);
+                        }
+                    });
+                } else {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += 'Error! ';
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("ChangePwdUpbutton()", 999);
+                }
+            },
+            error: function () {
+                console.info("error");
+            }
+        });
+    }
+    ////////注册部分///////////注册部分///////////注册部分///////////注册部分///////////注册部分////////
+    function SignUp() {
+        var acc = $("#acc").val();
+        var pwd = $("#pwd").val();
+        var password = $("#password").val();
+        var idCard = $("#idCard").val();
+        var grade = $("#grade").val();
+        if (acc.length == 0) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip: Account Empty!";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else if (acc.length < 4) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip! Account'length is 4 at least!";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else if (pwd.length == 0) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip! Password Empty!";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else if (pwd.length < 6) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip! Password'length is 6 at least!";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else if (password != pwd) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += 'tip! ConformPassword is not same as Password!';
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else if (idCard.length == 0) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip! idCard Empty!";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else if (idCard.length != 18) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip! idCard'length must to be 18!";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else if (grade.length == 0) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip! Grade is Empty";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        }else if (grade.length != 4) {
+            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+            html += "tip: Grade is like \"2020\"";
+            html += '</div>';
+            $("#return").empty().append(html);
+            setTimeout("signUpbutton()", 999);
+        } else {
+            $.ajax({
+                type: "get",
+                url: "selectUserName/acc=" + acc + "",
+                cache: false,
+                async: false,
+                dataType: 'json',
+                success: function () {
+                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                    html += 'tip! Account had been Signed Up!';
+                    html += '</div>';
+                    $("#return").empty().append(html);
+                    setTimeout("signUpbutton()", 999);
+                },
+                error: function () {
+                    $.ajax({
+                        type: "get",
+                        url: "selectIdCard/idCard=" + idCard + "",
+                        cache: false,
+                        async: false,
+                        dataType: 'json',
+                        success: function () {
+                            var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                            html += 'tip ! idCard had been Signed Up!';
+                            html += '</div>';
+                            $("#return").empty().append(html);
+                            setTimeout("signUpbutton()", 999);
+                        },
+                        error: function () {
+                            $.ajax({
+                                type: "get",
+                                url: "/SignUpUser/acc=" + acc + "&&pwd=" + password + "&&idCard=" + idCard + "&&Grade=" + grade + "",
+                                cache: false,
+                                async: false,
+                                success: function () {
+                                    /////////注册成功/////////注册成功/////////注册成功/////////注册成功
+                                    var html = '<div style="font-size:18px;text-align:center;color:#66a3ff;">';
+                                    html += 'Success! Signed Up!';
+                                    html += '</div>';
+                                    $("#return").empty().append(html);
+                                    setTimeout("LoginToUser(" + acc + ")", 999);
+                                },
+                                error: function () {
+                                    console.info("SignUp Error");
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
+    function login() {
+        var html = '';
+        //////////////////////////////////////////
+        html += '<div class="signupdiv">';
+        html += '<input class="signup" type="button"  value="SignUp" onclick="SignUpCheck()"/>';
+        html += '</div>';
+        //////////////////////////////////////////
+        html += '<div id="main">';
+        html += '<div class="whole">';
+        html += '<div class="title">Please Login</div>';
+        html += '<div class="input_tit">Your Account</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="text" name="username" id="acc"  value="" />';
+        html += '</div>';
+        html += '<div class="blank_30"></div>';
+        html += '<div class="input_tit">Password</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="password" name="password" id="pwd" value="" />';
+        html += '</div>';
+        html += '<div class="finish_box" id="return">';
+        html += '<input class="finish_btn" type="button" value="Login" onclick="LoginByAcc()"/>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div style="width:30%;margin-left:35%;">';
+        html += '<input class="adminlogin" type="button" value="Change Password" onclick="ChangePwd()"/>';
+        html += '</div>';
+        html += '</div>';
+        $("#All").empty().append(html);
+    }
+    function SignUpTologin() {
+        var html = '<div class="signupdiv">';
+        html += '<input class="signup" type="button"  value="SignUp" onclick="SignUpCheck()"/>';
+        html += '</div>';
+        html += '<div id="main">';
+        html += '<div class="whole">';
+        html += '<div class="title">Please Login</div>';
+        html += '<div class="input_tit">Your Account</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="text" name="username" id="acc"  value="" />';
+        html += '</div>';
+        html += '<div class="blank_30"></div>';
+        html += '<div class="input_tit">Password</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="password" name="password" id="pwd" value="" />';
+        html += '</div>';
+        html += '<div class="finish_box" id="return">';
+        html += '<input class="finish_btn" type="button" value="Login" onclick="LoginByAcc()"/>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div style="width:30%;margin-left:35%;">';
+        html += '<input class="adminlogin" type="button" value="Change Password" onclick="ChangePwd()"/>';
+        html += '</div>';
+        html += '</div>';
+        $("#All").empty().append(html);
+    }
+    function ChangePwd() {
+        var html = '';
+        //////////////////////////////////////////
+        html += '<div class="signupdiv">';
+        html += '<input class="signup" type="button"  value="SignUp" onclick="login()"/>';
+        html += '</div>';
+        //////////////////////////////////////////
+        html += '<div id="main">';
+        html += '<div class="whole">';
+        html += '<div>';
+        html += '<input class="adminlogin" type="button" value="Back to Login" onclick="login()"/>';
+        html += '</div>';
+        html += '<div class="title">Change Password</div>';
+        html += '<div class="input_tit">Your Account</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="text" name="username" id="cacc"  value="" />';
+        html += '</div>';
+        html += '<div class="blank_30"></div>';
+        html += '<div class="input_tit">New Password</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="password" name="password" id="cpwd" value="" />';
+        html += '</div>';
+        html += '<div class="input_tit">Conform Password</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="password" name="confpwd" id="cpassword" value="" />';
+        html += '</div>';
+        html += '<div class="input_tit">Your idCard</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="text" name="idCard" id="cidCard" value="" />';
+        html += '</div>';
+        html += '<div class="finish_box" id="return">';
+        html += '<input class="finish_btn" type="button" value="Change" onclick="UpdatePwd()"/>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        $("#All").empty().append(html);
+    }
+    function SignUpCheck() {
+        var html = '';
+		html += '<div class="signupdiv">';
+        html += '<input class="signup" type="button"  value="Login" onclick="SignUpTologin()"/>';
+        html += '</div>';
+        html += '<div id="main">';
+        html += '<div class="whole">';
+        html += '<div class="title">SignUp</div>';
+        html += '<div class="input_tit">Your Account</div>';
+        html += '<div class="input_box">';
+        html += '<input class="input_self" type="text" name="username" id="acc"  value="" />';
+        html += '</div>';
+        html += '<div class="blank_30"></div>';
+        html += '<div class="input_tit">Password</div>';
+        html += '<div class="input_box" >';
+        html += '<input class="input_self" type="password" name="password" id="pwd"  value="" />';
+        html += '</div>';
+        html += '<div class="input_tit">Conform Password</div>';
+        html += '<div class="input_box" >';
+        html += '<input class="input_self" type="password" name="conformPassword" id="password"  value="" />';
+        html += '</div>';
+        html += '<div class="input_tit">Your idCard</div>';
+        html += '<div class="input_box" >';
+        html += '<input class="input_self" type="text" name="idCard" id="idCard"  value="" />';
+        html += '</div>';
+        html += '<div class="input_tit">Your Grade</div>';
+        html += '<div class="input_box" >';
+        html += '<input class="input_self" type="text" name="grade" id="grade"  value="" />';
+        html += '</div>';
+        html += '<div class="finish_box" id="return">';
+        html += '<input class="finish_btn" type="button" value="SignUp" onclick="SignUp()"/>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        $("#All").empty().append(html);
+    }
+    function loginbutton() {
+        var html = '<div class="finish_box" id="return" style="width:100%;margin-left:0;">';
+        html += '<input class="finish_btn" type="button" value="Login" onclick="LoginByAcc()"/>';
+        html += '</div>';
+        $("#return").empty().append(html);
+    }
+    function signUpbutton() {
+        var html = '<div class="finish_box" id="return" style="width:100%;margin-left:0;">';
+        html += '<input class="finish_btn" type="button" value="SignUp" onclick="SignUp()"/>';
+        html += '</div>';
+        $("#return").empty().append(html);
+    }
+    function ChangePwdUpbutton() {
+        var html = '<div class="finish_box" id="return" style="width:100%;margin-left:0;">';
+        html += '<input class="finish_btn" type="button" value="Change" onclick="UpdatePwd()"/>';
+        html += '</div>';
+        $("#return").empty().append(html);
+    }
+</script>
+</html>

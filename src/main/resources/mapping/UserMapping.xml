@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.java.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.java.entity.User">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="userName" jdbcType="VARCHAR" property="userName"/>
+        <result column="passWord" jdbcType="VARCHAR" property="passWord"/>
+        <result column="idCard" jdbcType="VARCHAR" property="idCard"/>
+        <result column="grade" jdbcType="INTEGER" property="grade"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="realName" jdbcType="VARCHAR" property="realName"/>
+        <result column="personShow" jdbcType="VARCHAR" property="personShow"/>
+    </resultMap>
+    <select id="selectUserName" resultType="com.java.entity.User">
+        select
+        *
+        from
+        user
+        where userName = #{userName}
+    </select>
+    <select id="selectSingleAcc" resultType="com.java.entity.User">
+        select
+        *
+        from
+        user
+        where userName = #{userName}
+    </select>
+    <update id="updateUserPwd" parameterType="com.java.entity.User">
+        update
+        user
+        set
+        passWord = #{passWord}
+        where userName = #{userName}
+    </update>
+    <select id="selectIdCard" resultType="com.java.entity.User">
+        select
+        *
+        from
+        user
+        where idCard = #{idCard}
+    </select>
+    <insert id="SignUpUser" parameterType="com.java.entity.User">
+        INSERT INTO
+        user
+        (userName,passWord,idCard,grade)
+        VALUES
+        (
+        #{userName},
+        #{passWord},
+        #{idCard},
+        #{grade}
+        )
+    </insert>
+    <select id="selectUser" resultType="com.java.entity.User">
+        select
+        *
+        from
+        user
+    </select>
+    <delete id="deleteUser" parameterType="com.java.entity.User">
+        delete
+        from
+        user
+        where id = #{id}
+    </delete>
+    <update id="updateUser" parameterType="com.java.entity.User">
+        update
+        user
+        set
+        userName = #{userName},
+        passWord = #{passWord},
+        idCard = #{idCard},
+        grade = #{grade},
+        email = #{email},
+        realName = #{realName},
+        personShow = #{personShow}
+        where id = #{id}
+    </update>
+    <select id="selectAcc" resultType="com.java.entity.User">
+        select
+        *
+        from
+        user
+        where userName = #{userName}
+    </select>
+    <select id="selectIdNum" resultType="com.java.entity.User">
+        select
+        *
+        from
+        user
+        where idCard = #{idCard}
+    </select>
+    <insert id="addUser" parameterType="com.java.entity.User">
+        INSERT INTO
+        user
+        (userName,passWord,idCard,grade,email,realName,personShow)
+        VALUES
+        (
+        #{userName},
+        #{passWord},
+        #{idCard},
+        #{grade},
+        #{email},
+        #{realName},
+        #{personShow}
+        )
+    </insert>
+    <update id="updateUserInformation" parameterType="com.java.entity.User">
+        update
+        user
+        set
+        email = #{email},
+        realName = #{realName},
+        personShow = #{personShow}
+        where userName = #{userName}
+    </update>
+</mapper>
